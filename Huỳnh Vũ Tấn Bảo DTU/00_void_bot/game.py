@@ -6,7 +6,7 @@ import os
 import time
 import random
 
-number = 30
+number = random.randint(20, 40)
 
 def speak(robot_brain):
     print("Robot: " + robot_brain)
@@ -22,29 +22,23 @@ def speak(robot_brain):
     if os.path.exists(name_mp3):
         os.remove(name_mp3)
 
-def isPowerOfTwo(n):
-    if n == 0:
-        return False
-    while n % 2 == 0:
-        n = n // 2
-    return n == 1
+def isNumberTrue(n):
+    return n in [1, 2, 5]
 
 def ai(n):
     dp = [0] * (n + 1)
     dp[0] = False
     res = []
+    l = [1, 2, 5]
     for i in range(1, n + 1):
         dp[i] = False
-        k = 1
-        while k <= i:
-            if dp[i - k] == False:
+        for x in l:
+            if i - x >= 0 and dp[i - x] == False:
                 dp[i] = True
-            k = k * 2
-    k = 1
-    while k <= n:
-        if n - k >= 0 and dp[n - k] == False:
-            res.append(k)
-        k = k * 2
+                break
+    for x in l:
+        if n - x >= 0 and dp[n - x] == False:
+            res.append(x)
     if len(res) == 0:
         return random.randint(1, n)
     return random.choice(res)
@@ -54,12 +48,12 @@ end = True
 name_user = ""
 
 robot_ear = speech_recognition.Recognizer()
-speak("Chào mừng đến với trò chơi rút số.")
+speak("Chào mừng đến với trò chơi rút số.\nTôi và bạn sẽ rút lần lượt các số trong số {0}.\nNgười rút số cuối cùng là người thắng cuộc (Nghĩa là cần rút về số 0).\nLưu ý, số cần rút phải là 1, 2 hoặc 5".format(number))
 while end:
     robot_brain = ""
 
     with speech_recognition.Microphone() as mic:
-        print("Robot: Con số bạn muốn là")
+        print("Robot: Con số bạn muốn rút là:")
         audio = robot_ear.listen(mic)
 
     try:
@@ -81,8 +75,8 @@ while end:
             x = numbers[0]
             if x > number:
                 robot_brain = "Con số bạn chọn lớn hơn {}, vui lòng chọn lại".format(number)
-            elif not isPowerOfTwo(x):
-                robot_brain = "Con số bạn chọn không phải là lũy thừa của 2, vui lòng chọn lại"
+            elif not isNumberTrue(x):
+                robot_brain = "Con số bạn chọn không hợp lệ, phải là 1, 2 hoặc 5, vui lòng chọn lại"
             else:
                 number -= x
                 robot_brain = "Con số bạn chọn là {}, con số còn lại là {}".format(x, number)
