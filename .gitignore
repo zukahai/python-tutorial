@@ -1,0 +1,11 @@
+#python
+python/
+*.pyc
+tempCodeRunnerFile.py
+
+#deploy
+
+build/
+dist/
+*.egg-info/
+*.spec
