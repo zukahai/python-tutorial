@@ -48,7 +48,7 @@ end = True
 name_user = ""
 
 robot_ear = speech_recognition.Recognizer()
-speak("Chào mừng đến với trò chơi rút số.\nTôi và bạn sẽ rút lần lượt các số trong số {0}.\nNgười rút số cuối cùng là người thắng cuộc (Nghĩa là cần rút về số 0).\nLưu ý, số cần rút phải là 1, 2 hoặc 5".format(number))
+speak("Chào mừng đến với trò chơi rút số.\nTôi và bạn sẽ rút lần lượt các số trong số {0}.\nNgười rút số cuối cùng là người thắng cuộc (Nghĩa là cần trừ {0} về số 0).\nLưu ý, số cần rút phải là 1, 2 hoặc 5".format(number))
 while end:
     robot_brain = ""
 
@@ -65,40 +65,50 @@ while end:
 
     if you == "":
         robot_brain = "Tôi không hiểu bạn nói gì, thử lại nhé."
-    elif "tạm biệt" in you.lower():
+        speak(robot_brain)
+        continue
+
+    if "tạm biệt" in you.lower():
         end = False
         robot_brain = "Tạm biệt {0}, hẹn gặp lại bạn sau.".format(name_user)
-    else:
-        # Tách số từ câu nói
-        numbers = [int(s) for s in you.split() if s.isdigit()]
-        if len(numbers) > 0:
-            x = numbers[0]
-            if x > number:
-                robot_brain = "Con số bạn chọn lớn hơn {}, vui lòng chọn lại".format(number)
-            elif not isNumberTrue(x):
-                robot_brain = "Con số bạn chọn không hợp lệ, phải là 1, 2 hoặc 5, vui lòng chọn lại"
-            else:
-                number -= x
-                robot_brain = "Con số bạn chọn là {}, con số còn lại là {}".format(x, number)
-                speak(robot_brain)
+        speak(robot_brain)
+        break
 
-                if number == 0:
-                    robot_brain = "Chúc mừng bạn đã thắng cuộc"
-                    speak(robot_brain)
-                    break
-                rp = ai(number)
-                number -= rp
-                time.sleep(0.5)
-                robot_brain = "Tôi chọn số {}, số còn lại là {}".format(rp, number)
-                if number == 0:
-                    speak(robot_brain)
-                    time.sleep(0.5)
-                    robot_brain = "Tôi đã thắng, bạn đã thua"
-                    speak(robot_brain)
-                    break
-        else:
-            robot_brain = "Không tìm thấy con số trong câu nói của bạn."
+    
+    # Tách số từ câu nói
+    numbers = [int(s) for s in you.split() if s.isdigit()]
+    if len(numbers) > 0:
+        x = numbers[0]
+        if x > number:
+            robot_brain = "Con số bạn chọn lớn hơn {}, vui lòng chọn lại".format(number)
+            speak(robot_brain)
+            continue
+        if not isNumberTrue(x):
+            robot_brain = "Con số bạn chọn không hợp lệ, phải là 1, 2 hoặc 5, vui lòng chọn lại"
+            speak(robot_brain)
+            continue
+        
+        number -= x
+        robot_brain = "Con số bạn chọn là {}, con số còn lại là {}".format(x, number)
+        speak(robot_brain)
 
+        if number == 0:
+            robot_brain = "Chúc mừng bạn đã thắng cuộc"
+            speak(robot_brain)
+            break
 
+        rp = ai(number)
+        number -= rp
+        time.sleep(0.5)
+        robot_brain = "Tôi chọn số {}, số còn lại là {}".format(rp, number)
+        speak(robot_brain)
+        if number == 0:
+            time.sleep(0.5)
+            robot_brain = "Tôi đã thắng, bạn đã thua"
+            speak(robot_brain)
+            break
+        continue
+    robot_brain = "Không tìm thấy con số trong câu nói của bạn."
     speak(robot_brain)
+
     
