@@ -90,6 +90,10 @@ while running:
         hook_velocity += 0.1 
     #choi game
     
+    # In chữ chữ Hello World
+    # font = pygame.font.Font(None, 36)
+    text = font.render('Hello World', True, BLACK)
+    screen.blit(text, (10, 10))
     
 
     for event in pygame.event.get():
@@ -103,7 +107,10 @@ while running:
                 hook_grab = False
                 hook_velocity = 0
     
-
+    # In ra chữ Hello World
+    # font = pygame.font.Font(None, 36)
+    text = font.render('Hello World', True, BLACK)
+    screen.blit(text, (10, 10))
 
 
     for event in pygame.event.get():
