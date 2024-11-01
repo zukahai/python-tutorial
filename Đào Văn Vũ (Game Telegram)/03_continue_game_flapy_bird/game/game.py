@@ -17,3 +17,8 @@ while running:
     pygame.draw.rect(screen, (255, 0, 0), (50, 50, 100, 100))
 
     pygame.display.flip()
+
+    # Vẽ chữ hello
+    font = pygame.font.Font(None, 36)
+    text = font.render("Hello", True, (255, 255, 255))
+    screen.blit(text, (200, 200))
