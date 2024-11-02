@@ -54,7 +54,7 @@ tower_radius = 50
 class Enemy:
 
     def __init__(self):
-        self.is_show_hp = 0
+        self.is_show_hp = 100
 
     def get_sprite(self):
         x = self.current_frame * 64
@@ -154,8 +154,7 @@ class Gobin(Enemy):
         self.index_waypoints = 0
         self.speed = 1  # Tốc độ di chuyển
         self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
-        self.health = 30
-        self.max_health = 20
+        self.health = self.max_health = 30
 
     def get_sprite(self):
         x = self.current_frame * self.width
@@ -181,10 +180,9 @@ class Shaman(Enemy):
         self.current_frame = 0
         self.num_frames = self.sprite_sheet.get_width() // self.width
         self.index_waypoints = 0
-        self.speed = 2.5  # Tốc độ di chuyển
+        self.speed = 4  # Tốc độ di chuyển
         self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
-        self.health = 20
-        self.max_health = 20
+        self.health = self.max_health = 20
 
     def get_sprite(self):
         x = self.current_frame * self.width
@@ -203,7 +201,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill(YELLOW)
         self.rect = pygame.Rect(x, y, 10, 10)
         self.target = target
-        self.speed = 5
+        self.speed = 10
 
     def update(self):
         dx = self.target.x - self.rect.x
@@ -327,10 +325,6 @@ while running:
     if currentime in time5:
         player = Shaman(screen, map.get_level(), WAYPOINT_LIST)
         players.append(player)
-    if pausing == False:
-        for player in players:
-            player.update()
-            player.draw()
     if currentime >= time[-1] and len(players) == 0:
         map.next_map()
         towers.empty()
@@ -359,6 +353,10 @@ while running:
     bullets.draw(screen)
     towers.update()
     towers.draw(screen)
+    if pausing == False:
+        for player in players:
+            player.update()
+            player.draw()
     # Đặt tháp khi nhấn chuột
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
