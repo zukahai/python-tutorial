@@ -56,7 +56,7 @@ class Enemy:
         x = self.current_frame * 64
         y = 0
         width = self.width
-        height = 64
+        height = self.height
         sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
         return sprite
 
@@ -86,7 +86,7 @@ class Enemy:
         # Quay lại nếu đi qua trái
         if self.x > self.waypoints[self.index_waypoints][0]:
             sprite = pygame.transform.flip(sprite, True, False)
-        self.screen.blit(sprite, (self.x - 32, self.y - 32))
+        self.screen.blit(sprite, (self.x - self.width // 2, self.y - self.height))
 
     def take_damage(self, damage):
         self.health -= damage
@@ -116,6 +116,7 @@ class Player(Enemy):
         self.health = 100
         self.max_health = 100
         self.width = 64
+        self.height = 64
 
     def get_sprite(self):
         x = self.current_frame * 64
@@ -147,6 +148,34 @@ class Gobin(Enemy):
     def get_sprite(self):
         x = self.current_frame * self.width
         y = 1 * self.height
+        width = self.width
+        height = self.height
+
+        sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
+        return sprite
+
+# lớp cú
+class Shaman(Enemy):
+    def __init__(self, screen, level, waypoint_list):
+        self.screen = screen
+        self.width = 96
+        self.height = 96
+       
+        intdex_random = random.randint(0, len(waypoint_list[level]) - 1)
+        self.waypoints = waypoint_list[level][intdex_random]
+        self.screen = screen
+        self.sprite_sheet = pygame.image.load("murcielagoRR.png").convert_alpha()
+        self.current_frame = 0
+        self.num_frames = self.sprite_sheet.get_width() // self.width
+        self.index_waypoints = 0
+        self.speed = 5  # Tốc độ di chuyển
+        self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
+        self.health = 50
+        self.max_health = 50
+
+    def get_sprite(self):
+        x = self.current_frame * self.width
+        y = 0 * self.height
         width = self.width
         height = self.height
 
@@ -251,6 +280,7 @@ time = [120,140,160,180,200,220]
 time2 =[80,100,120,140,190,240,300,360,380,400,420,440]
 time3 =[420,440,460,480,500,520,540,600]
 time4 =[620,640,660,680,700,720,740,760]
+time5 =[20, 800, 810, 820]
 
 hp = 100
 
@@ -260,10 +290,6 @@ display_text = False
 pausing = False
 while running:
     fps = clock.tick(60)
-   
-       
-        
-    
     map.draw_map()
     currentime += 1
     pygame.draw.rect(screen, WHITE, (730, 0, 90, 50))
@@ -285,6 +311,9 @@ while running:
     # if currentime in time4:
     #     player = Orc(screen, map.get_level(), WAYPOINT_LIST)
     #     players.append(player)
+    if currentime in time5:
+        player = Shaman(screen, map.get_level(), WAYPOINT_LIST)
+        players.append(player)
     if pausing == False:
         for player in players:
             player.update()
