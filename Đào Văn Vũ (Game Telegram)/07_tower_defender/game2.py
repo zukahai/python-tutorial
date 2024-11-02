@@ -254,6 +254,7 @@ time4 =[620,640,660,680,700,720,740,760]
 
 hp = 100
 
+
   
 display_text = False 
 pausing = False
