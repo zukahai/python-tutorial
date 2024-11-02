@@ -80,7 +80,8 @@ class Enemy:
             self.current_frame = 0
 
     def draw(self):
-        pygame.draw.rect(self.screen, (GREEN), (self.x -30, self.y - 45, (self.health / self.max_health) * self.width, 14))
+        length_bar = 60
+        pygame.draw.rect(self.screen, (GREEN), ((self.x -length_bar//2), self.y - self.height - 10, (self.health / self.max_health) * length_bar, 14))
         sprite = self.get_sprite()
 
         # Quay lại nếu đi qua trái
