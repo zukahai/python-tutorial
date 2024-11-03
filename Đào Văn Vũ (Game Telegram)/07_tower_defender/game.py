@@ -122,7 +122,7 @@ while running:
         towers.empty()
         enemies = []
         player.set_gold(60)
-        player.set_hp(100)
+        # player.set_hp(100)
         print("Next map", map.get_level())
         currentime = 0   
     for enemy in enemies:

@@ -5,7 +5,7 @@ from settings import *
 
 class Enemy:
     def __init__(self):
-        self.is_show_hp = 100
+        self.is_show_hp = 1000
 
     def get_sprite(self):
         x = self.current_frame * 64

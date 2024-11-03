@@ -4,7 +4,7 @@ from settings import *
 class Player:
     def __init__(self, screen):
         # đặt là private để tránh việc thay đổi giá  của gold
-        self.__gold = 100 # Số vàng ban đầu
+        self.__gold = 60 # Số vàng ban đầu
         self.screen = screen
         self.__hp = 100
 
