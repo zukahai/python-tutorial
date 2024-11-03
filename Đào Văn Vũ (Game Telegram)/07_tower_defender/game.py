@@ -3,8 +3,17 @@ import random
 import time
 import math
 
+from settings import *
+from Person import Person
+from Gobin import Gobin
+from Shaman import Shaman
+from Tower import Tower
+from Player import Player
+
+
 # Khởi tạo Pygame
 pygame.init()
+font = pygame.font.SysFont('sans', 50)
 
 # Cài đặt màn hình
 SCREEN_WIDTH = 800
@@ -13,13 +22,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Defender Tower Map")
 clock = pygame.time.Clock()
 # Màu sắc
-WHITE = (255, 255, 255)
-GREEN = (34, 139, 34)
-BROWN = (139, 69, 19)
-GRAY = (105, 105, 105)
-YELLOW = (255, 255, 0)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
 # Tọa độ các điểm mốc (waypoints) trên bản đồ
 WAYPOINTS1 = [(379, 2), (383, 86), (359, 176), (310, 237), (227, 272), (189, 350), (213, 405), (290, 428), (372, 427), (477, 433), (550, 435), (629, 416), (694, 371), (748, 359), (798, 361)]
 WAYPOINTS2= [(791, 205), (685, 205), (627, 191), (573, 129), (561, 90), (500, 77), (436, 116), (428, 160), (401, 206), (335, 219), (255, 216), (191, 248), (187, 282), (223, 311), (294, 342), (342, 330), (422, 320), (485, 329), (531, 361), (529, 410), (487, 437), (424, 450), (359, 478), (349, 528), (355, 570), (350, 599)]
@@ -47,212 +49,16 @@ WAYPOINT_LIST[4] = [WAYPOINTS4, WAYPOINTS4_1]
 WAYPOINT_LIST[5] = [WAYPOINTS5, WAYPOINTS5_1, WAYPOINTS5_2]
 WAYPOINT_LIST[6] = [WAYPOINTS6, WAYPOINTS6_1, WAYPOINTS6_2, WAYPOINTS6_3]
 
-player_gold = 60
+
 tower_cost = 20
 tower_radius = 50
 
-class Enemy:
-
-    def __init__(self):
-        self.is_show_hp = 100
-
-    def get_sprite(self):
-        x = self.current_frame * 64
-        y = 0
-        width = self.width
-        height = self.height
-        sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
-        return sprite
-
-    def update(self):
-        # Di chuyển dọc theo waypoints
-        if self.index_waypoints < len(self.waypoints) - 1:
-            target_x, target_y = self.waypoints[self.index_waypoints]
-            dx, dy = target_x - self.x, target_y - self.y
-            distance = math.hypot(dx, dy)
-
-            if distance > 0:
-                self.x += dx / distance * self.speed
-                self.y += dy / distance * self.speed
-
-            # Khi đến gần waypoint hiện tại, chuyển sang waypoint tiếp theo
-            if distance < 5:  
-                self.index_waypoints += 1
-
-        self.is_show_hp += 1
-
-
-        self.current_frame += 1
-        if self.current_frame >= self.num_frames:
-            self.current_frame = 0
-
-    def draw(self):
-        if self.is_show_hp < 120:
-            length_bar = 60
-            pygame.draw.rect(self.screen, (GREEN), ((self.x -length_bar//2), self.y - self.height - 10, (self.health / self.max_health) * length_bar, 14))
-            pygame.draw.rect(self.screen, (RED), ((self.x -length_bar//2), self.y - self.height - 10, length_bar, 14), 2)
-        
-        sprite = self.get_sprite()
-        # Quay lại nếu đi qua trái
-        if self.x > self.waypoints[self.index_waypoints][0]:
-            sprite = pygame.transform.flip(sprite, True, False)
-        self.screen.blit(sprite, (self.x - self.width // 2, self.y - self.height))
-
-    def take_damage(self, damage):
-        self.is_show_hp = 0
-        self.health -= damage
-        if self.health <= 0:
-            # Xóa kẻ thù nếu hết máu
-            return True
-        return False
-    
-    # Kiểm tra đi tới waypoint cuối cùng
-    def is_at_end(self):
-        return self.index_waypoints == len(self.waypoints) - 1
-    
-
-
-# Lớp kẻ thù (Player chỉ là một ví dụ, bạn có thể đổi tên thành `Enemy`)
-class Player(Enemy):
-    def __init__(self, screen, level, waypoint_list):
-        super().__init__()
-        intdex_random = random.randint(0, len(waypoint_list[level]) - 1)
-        self.waypoints = waypoint_list[level][intdex_random]
-        self.screen = screen
-        self.sprite_sheet = pygame.image.load("./assets/images/idleR.png").convert_alpha()
-        self.current_frame = 0
-        self.num_frames = self.sprite_sheet.get_width() // 64
-        self.index_waypoints = 0
-        self.speed = 0.5  # Tốc độ di chuyển
-        self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
-        self.health = self.max_health = 50
-        self.width = 64
-        self.height = 64
-
-    def get_sprite(self):
-        x = self.current_frame * 64
-        y = 0
-        width = self.width
-        height = 64
-        sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
-        return sprite
-
-    
-class Gobin(Enemy):
-    def __init__(self, screen, level, waypoint_list):
-        super().__init__()
-        self.screen = screen
-        self.width = 112
-        self.height = 112
-       
-        intdex_random = random.randint(0, len(waypoint_list[level]) - 1)
-        self.waypoints = waypoint_list[level][intdex_random]
-        self.screen = screen
-        self.sprite_sheet = pygame.image.load("./assets/images/nubeIR.png").convert_alpha()
-        self.current_frame = 0
-        self.num_frames = self.sprite_sheet.get_width() // self.width
-        self.index_waypoints = 0
-        self.speed = 1  # Tốc độ di chuyển
-        self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
-        self.health = self.max_health = 30
-
-    def get_sprite(self):
-        x = self.current_frame * self.width
-        y = 0 * self.height
-        width = self.width
-        height = self.height
-
-        sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
-        return sprite
-
-# lớp cú
-class Shaman(Enemy):
-    def __init__(self, screen, level, waypoint_list):
-        super().__init__()
-        self.screen = screen
-        self.width = 96
-        self.height = 96
-       
-        intdex_random = random.randint(0, len(waypoint_list[level]) - 1)
-        self.waypoints = waypoint_list[level][intdex_random]
-        self.screen = screen
-        self.sprite_sheet = pygame.image.load("./assets/images/murcielagoRR.png").convert_alpha()
-        self.current_frame = 0
-        self.num_frames = self.sprite_sheet.get_width() // self.width
-        self.index_waypoints = 0
-        self.speed = 4  # Tốc độ di chuyển
-        self.x, self.y = self.waypoints[0]  # Bắt đầu tại điểm mốc đầu tiên
-        self.health = self.max_health = 20
-
-    def get_sprite(self):
-        x = self.current_frame * self.width
-        y = 0 * self.height
-        width = self.width
-        height = self.height
-
-        sprite = self.sprite_sheet.subsurface(pygame.Rect(x, y, width, height))
-        return sprite
-
-# Lớp đạn
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, target):
-        super().__init__()
-        self.image = pygame.Surface((10, 10))
-        self.image.fill(YELLOW)
-        self.rect = pygame.Rect(x, y, 10, 10)
-        self.target = target
-        self.speed = 10
-
-    def update(self):
-        dx = self.target.x - self.rect.x
-        dy = self.target.y - self.rect.y
-        distance = math.hypot(dx, dy)
-
-        if distance > 0:
-            self.rect.x += dx / distance * self.speed
-            self.rect.y += dy / distance * self.speed
-
-        # Kiểm tra va chạm với kẻ thù
-        if pygame.Rect.colliderect(self.rect, pygame.Rect(self.target.x, self.target.y, 64, 64)):
-            global player_gold
-            if self.target.take_damage(10):
-                
-                if self.target in players:
-                    player_gold += 10 
-                    players.remove(self.target)  # Xóa kẻ thù nếu bị giết
-            self.kill()  # Xóa đạn sau khi va chạm
 def is_valid_build(x, y,towers, min_distance):
         for tower in towers:
             distance = math.sqrt((tower.rect.centerx - x) ** 2 + (tower.rect.centery - y) ** 2)
             if distance < min_distance * 2:
                 return False
         return True
-# Lớp tháp (Tower)
-class Tower(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.image.load('./assets/images/towermage.png')
-        self.image = pygame.transform.scale(self.image, (100, 100))
-        
-        self.rect = self.image.get_rect(center=(x, y))
-        self.range = 150  # Phạm vi tấn công
-        self.cooldown = 1000  # Thời gian chờ giữa các lần bắn (ms)
-        self.last_shot = pygame.time.get_ticks()  # Lần bắn cuối
-
-    def shoot(self, enemies, bullets):
-        
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_shot >= self.cooldown:
-            for enemy in enemies:
-                dx = enemy.x - self.rect.x
-                dy = enemy.y - self.rect.y
-                distance = math.hypot(dx, dy)
-                if distance < self.range:
-                    # Bắn đạn về phía kẻ thù trong phạm vi
-                    bullet = Bullet(self.rect.centerx, self.rect.centery, enemy)
-                    bullets.add(bullet)
-                    self.last_shot = current_time
-                    break
    
 # Lớp Map để quản lý cấp độ
 class Map:
@@ -274,70 +80,56 @@ class Map:
     def get_level(self):
         return self.level
 
+player = Player(screen)
+
 # Vòng lặp chính
 running = True
 map = Map(screen)
 SPRITE_WIDTH = 64
 SPRITE_HEIGHT = 64
-player = Player(screen, 1, WAYPOINT_LIST)
-players = [player]
+enemies = []
 currentime = 0
 
 # Tạo nhóm cho tháp và đạn
 towers = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
-font = pygame.font.SysFont('sans', 50)
+
 time = [60, 180, 300, 420, 1000, 1020, 1040, 1700, 1760, 1820, 1880]
 time2 =[280,340,400,460,1520,1580,1640,1700]
 time3 =[420,440,460,480,500,520,540,600]
 time4 =[620,640,660,680,700,720,740,760]
 time5 =[300, 320,  1200, 1300, 1400, 1500, 1800, 1810, 1820]
 
-hp = 100
 
-
-  
 display_text = False 
 pausing = False
 while running:
     fps = clock.tick(60)
     map.draw_map()
     currentime += 1
-    pygame.draw.rect(screen, WHITE, (730, 0, 90, 50))
-    text = font.render(str(currentime // 60), True, BLACK)
-    texthp = font.render(str(hp), True, RED)
-    textgold = font.render(str(player_gold), True, YELLOW)
-    screen.blit(textgold, (0, 0))
-    screen.blit(texthp, (0, 50))
-    screen.blit(text, (730, 0))
+    
     if currentime in time :
-        player = Player(screen, map.get_level(), WAYPOINT_LIST)
-        players.append(player)
+        enemy = Person(screen, map.get_level(), WAYPOINT_LIST)
+        enemies.append(enemy)
     if currentime in time2:
-        player = Gobin(screen, map.get_level(), WAYPOINT_LIST)
-        players.append(player)
-    # if currentime in time3:
-    #     player = Shaman(screen, map.get_level(), WAYPOINT_LIST)
-    #     players.append(player)
-    # if currentime in time4:
-    #     player = Orc(screen, map.get_level(), WAYPOINT_LIST)
-    #     players.append(player)
+        enemy = Gobin(screen, map.get_level(), WAYPOINT_LIST)
+        enemies.append(enemy)
     if currentime in time5:
-        player = Shaman(screen, map.get_level(), WAYPOINT_LIST)
-        players.append(player)
-    if currentime >= time[-1] and len(players) == 0:
+        enemy = Shaman(screen, map.get_level(), WAYPOINT_LIST)
+        enemies.append(enemy)
+    if currentime >= time[-1] and len(enemies) == 0:
         map.next_map()
         towers.empty()
-        players = []
-        player_gold = 60
-        hp = 100
+        enemies = []
+        player.set_gold(60)
+        player.set_hp(100)
         print("Next map", map.get_level())
         currentime = 0   
-    for player in players:
-        if player.is_at_end():
-            hp -= 10
-            players.remove(player)
-            if hp <= 0:
+    for enemy in enemies:
+        if enemy.is_at_end():
+            player.remove_hp(10)
+            enemies.remove(enemy)
+            if player.is_dead():
                 pausing = True
 
                 
@@ -346,26 +138,28 @@ while running:
    
     # Bắn đạn từ các tháp
     for tower in towers:
-        tower.shoot(players, bullets)
+        tower.shoot(enemies, bullets)
 
     # Cập nhật vị trí đạn
-    bullets.update()
+    bullets.update(enemies, player)
+
     bullets.draw(screen)
     towers.update()
     towers.draw(screen)
+    player.draw(currentime)
     if pausing == False:
-        for player in players:
-            player.update()
-            player.draw()
+        for enemy in enemies:
+            enemy.update()
+            enemy.draw()
     # Đặt tháp khi nhấn chuột
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            if player_gold >= tower_cost and is_valid_build(mouse_x, mouse_y, towers, tower_radius):
+            if player.get_gold() >= tower_cost and is_valid_build(mouse_x, mouse_y, towers, tower_radius):
                 tower = Tower(mouse_x, mouse_y)
-                player_gold -= tower_cost
+                player.remove_gold(tower_cost)
                 towers.add(tower)
                 text = font.render("Tower bought", True, BLACK)
                 screen.blit(text, (300, 300))
