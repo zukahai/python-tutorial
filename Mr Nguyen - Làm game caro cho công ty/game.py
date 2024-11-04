@@ -87,15 +87,12 @@ while running:
                     next = taget.copy()
                 taget = {"row": row, "column": column}
     # Đặt nền màn hình
-    screen.fill(BLACK)
+    screen.fill(WHITE)
 
-    # Vẽ mạng lưới 10x10
-    for i in range(N):
-        pygame.draw.line(screen, WHITE, (0, i * size), (game_length, i * size), 1)
-        pygame.draw.line(screen, WHITE, (i * size, 0), (i * size, game_length), 1)
+   
 
     # Vẽ ô target màu xám
-    pygame.draw.rect(screen, GRAY, (taget["column"] * size + 1, taget["row"] * size + 1, size - 2, size - 2))
+    pygame.draw.rect(screen, GRAY, (taget["column"] * size , taget["row"] * size, size, size))
 
     # Vẽ dữ liệu
     for row in range(N):
@@ -103,7 +100,10 @@ while running:
             if data[row][column] != 0:
                 screen.blit(images[data[row][column]], (column * size, row * size))
 
-    
+     # Vẽ mạng lưới 10x10
+    for i in range(N):
+        pygame.draw.line(screen, BLACK, (0, i * size), (game_length, i * size), 1)
+        pygame.draw.line(screen, BLACK, (i * size, 0), (i * size, game_length), 1)
     
     # Cập nhật màn hình
     pygame.display.flip()
