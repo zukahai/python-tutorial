@@ -13,7 +13,7 @@ image_white = cv2.imread("./assets/images/white.png")
 
 test = cv2.imread("./assets/images/test3.png")
 
-num_rows, num_cols = 7, 10
+num_rows, num_cols = 10, 10
 
 def cnt_nonzero(image):
     # đọc từng pixel của ảnh và đếm tần số xuất hiện của mỗi màu

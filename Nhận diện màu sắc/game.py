@@ -1,96 +1,94 @@
 import pygame
 import sys
+import cv2
 from detech import *
+from scanScreen import ScreenCapture
 
-image_path = "./assets/images/image.png"
+class Game:
+    def __init__(self, image_path, N=10):
+        # Initialize pygame and screen properties
+        pygame.init()
+        self.image_path = image_path
+        self.N = N
 
+        # Screen and game dimensions
+        screen_info = pygame.display.Info()
+        self.screen_height = screen_info.current_h
+        self.game_length = self.screen_height - 100
+        self.size = self.game_length / self.N
 
-# Khởi tạo pygame
-pygame.init()
+        # Setup screen and colors
+        self.screen = pygame.display.set_mode((self.game_length, self.game_length))
+        pygame.display.set_caption("Game")
+        self.WHITE = (255, 255, 255)
+        self.BLACK = (0, 0, 0)
+        self.GRAY = (80, 80, 80)
 
-# Lấy chiều cao màn hình
-screen_info = pygame.display.Info()
-screen_height = screen_info.current_h
+        # Load images and scale them
+        self.images = [0]
+        for i in range(1, 4):
+            img = pygame.image.load(f"./assets/{i}.png")
+            self.images.append(pygame.transform.scale(img, (self.size, self.size)))
 
+        # Initialize game data and target positions
+        self.data = [[0 for _ in range(self.N)] for _ in range(self.N)]
+        self.target = {"row": 0, "column": 0}
+        self.next = self.next_target(self.target)
 
-N = 10
+        self.capturer = ScreenCapture()
+        self.capturer.select_region()
 
-data = [[0 for i in range(N)] for j in range(N)]
-
-# Chiều dài của game
-game_length = screen_height - 100
-
-# Kích thước mỗi ô trong mạng lưới 10x10
-size = game_length / 10
-
-# Thiết lập kích thước màn hình
-screen = pygame.display.set_mode((game_length, game_length))
-pygame.display.set_caption("Game")
-
-# Màu sắc
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-# sáng hơn màu đen 1 chút
-GRAY = (80, 80, 80)
-
-images = [0]
-images.append(pygame.image.load("./assets/1.png"))
-images.append(pygame.image.load("./assets/2.png"))
-images.append(pygame.image.load("./assets/3.png"))
-
-for i in range(1, 4):
-    images[i] = pygame.transform.scale(images[i], (size, size))
-
-def next_taget(taget):
-    res = taget.copy()
-    if res["row"] == N:
+    def next_target(self, target):
+        res = target.copy()
+        if res["row"] == self.N:
+            return res
+        res["column"] += 1
+        if res["column"] == self.N:
+            res["column"] = 0
+            res["row"] += 1
         return res
-    res["column"] += 1
-    if res["column"] == N:
-        res["column"] = 0
-        res["row"] += 1
-    return res
-    
 
-def reset_game():
-    global data
-    global taget
-    global next
-    data = [[0 for i in range(N)] for j in range(N)]
-    taget = {"row": 0, "column": 0}
-    next = next_taget(taget)
+    def reset_game(self):
+        self.data = [[0 for _ in range(self.N)] for _ in range(self.N)]
+        self.target = {"row": 0, "column": 0}
+        self.next = self.next_target(self.target)
 
-taget = {"row": 0, "column": 0}
-next = next_taget(taget)
+    def load_data(self):
+        image = cv2.imread(self.image_path)
+        self.data = get_color_image(image)
+        print(self.data)
 
+    def draw_grid(self):
+        for i in range(self.N):
+            pygame.draw.line(self.screen, self.BLACK, (0, i * self.size), (self.game_length, i * self.size), 1)
+            pygame.draw.line(self.screen, self.BLACK, (i * self.size, 0), (i * self.size, self.game_length), 1)
 
+    def draw_data(self):
+        for row in range(self.N):
+            for column in range(self.N):
+                if self.data[row][column] != 0:
+                    self.screen.blit(self.images[self.data[row][column]], (column * self.size, row * self.size))
 
-# Vòng lặp chính
-running = True
-while running:
-    image = cv2.imread(image_path)
-    data = get_color_image(image)
-    print(data)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    def run(self):
+        running = True
+        while running:
+            self.capturer.start_capturing()
+            self.load_data()
 
-        
-    screen.fill(WHITE)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-    # Vẽ dữ liệu
-    for row in range(N):
-        for column in range(N):
-            if data[row][column] != 0:
-                screen.blit(images[data[row][column]], (column * size, row * size))
+            # Fill the screen and draw data and grid
+            self.screen.fill(self.WHITE)
+            self.draw_data()
+            self.draw_grid()
+            
+            pygame.display.flip()
 
-     # Vẽ mạng lưới 10x10
-    for i in range(N):
-        pygame.draw.line(screen, BLACK, (0, i * size), (game_length, i * size), 1)
-        pygame.draw.line(screen, BLACK, (i * size, 0), (i * size, game_length), 1)
-    
-    # Cập nhật màn hình
-    pygame.display.flip()
-# Thoát pygame
-pygame.quit()
-sys.exit()
+        pygame.quit()
+        sys.exit()
+
+if __name__ == "__main__":
+    game = Game("./assets/images/image.png")
+    game.run()
