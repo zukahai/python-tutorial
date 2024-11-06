@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
+import random
 
 # Đọc ảnh từ tệp
 image_path = "./assets/images/image.png"
@@ -70,27 +71,41 @@ def get_color(dts, cnt):
 
 # xử lý ảnh
 
-# def get_data(data, image):
-#     # lưu 5 tạo độ có data != 0
-#     data_ = []
-#     for i in range(num_rows):
-#         for j in range(num_cols):
-#             if data[i][j] != 0:
-#                 data_.append((i, j))
-#     if len(data_) == 0:
-#         return
-#     else :
-#         # random 2 tạo độ
+def get_data(data, image):
+    # lưu 5 tạo độ có data != 0
+    data_ = []
+    for i in range(num_rows):
+        for j in range(num_cols):
+            if data[i][j] != 0:
+                data_.append((i, j))
+    if len(data_) > 0:
+        # random 1 tạo độ
+        i, j = data_[random.randint(0, len(data_) - 1)]
     
-#     # lấy ảnh từ 5 tạo độ
-#     images = []
-#     for i, j in data_:
-#         x = i * image.shape[0] // num_rows
-#         y = j * image.shape[1] // num_cols
-#         w = image.shape[0] // num_rows
-#         h = image.shape[1] // num_cols
-#         img = image[x:x+w, y:y+h , :]
-#         images.append(img)
+        # Cắt ảnh i, j
+        x = i * image.shape[0] // num_rows
+        y = j * image.shape[1] // num_cols
+        w = image.shape[0] // num_rows
+        h = image.shape[1] // num_cols
+        img = image[x:x+w, y:y+h , :]
+
+        c = get_color(dts, cnt_nonzero(img))
+        if c != data[i][j]:
+            return get_color_image(image)
+
+    # Tìm chỉ số i, j đầu tiên có data = 0
+    for i in range(num_rows):
+        for j in range(num_cols):
+            if data[i][j] == 0:
+                x = i * image.shape[0] // num_rows
+                y = j * image.shape[1] // num_cols
+                w = image.shape[0] // num_rows
+                h = image.shape[1] // num_cols
+                img = image[x:x+w, y:y+h , :]
+
+                data[i][j] = get_color(dts, cnt_nonzero(img))
+                return data
+                
 
 def get_color_image(image):
     is_pop = False

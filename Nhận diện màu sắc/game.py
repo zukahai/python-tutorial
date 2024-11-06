@@ -65,7 +65,7 @@ class Game:
 
     def load_data(self):
         image = cv2.imread(self.image_path)
-        self.data = get_color_image(image)
+        self.data = get_data(self.data, image)
         # print(self.data)
 
     def draw_grid(self):

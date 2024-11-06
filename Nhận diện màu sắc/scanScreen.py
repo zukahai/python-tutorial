@@ -79,7 +79,7 @@ class ScreenCapture:
             if screenshot:
                 file_path = f"{save_folder}/image.png"
                 screenshot.save(file_path)
-                print(f"Đã lưu: {file_path}")
+                # print(f"Đã lưu: {file_path}")
                 count += 1
         except KeyboardInterrupt:
             print("Đã dừng chụp màn hình.")
