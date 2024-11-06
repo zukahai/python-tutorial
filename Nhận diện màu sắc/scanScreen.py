@@ -35,10 +35,10 @@ class ScreenCapture:
             if event == cv2.EVENT_LBUTTONDOWN:
                 if self.top_left is None:
                     self.top_left = (x, y)
-                    print(f"Điểm trên trái: {self.top_left}")
+                    # print(f"Điểm trên trái: {self.top_left}")
                 elif self.bottom_right is None:
                     self.bottom_right = (x, y)
-                    print(f"Điểm dưới phải: {self.bottom_right}")
+                    # print(f"Điểm dưới phải: {self.bottom_right}")
                     cv2.destroyAllWindows()
         
         # Hiển thị toàn bộ màn hình và cho phép chọn vùng
@@ -59,7 +59,7 @@ class ScreenCapture:
             screenshot = pyautogui.screenshot(region=(x1, y1, width, height))
             return screenshot
         else:
-            print("Vui lòng chọn vùng cần chụp trước!")
+            # print("Vui lòng chọn vùng cần chụp trước!")
             return None
 
     def start_capturing(self, save_folder="./assets/images/"):

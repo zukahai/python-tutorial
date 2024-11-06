@@ -12,13 +12,25 @@ def get_gitignore_from_github():
         content = response.json().get("content")
         decoded_content = base64.b64decode(content).decode('utf-8')
         
-        print("Nội dung của tệp .gitignore:")
-        print(decoded_content)
-        return decoded_content
+        # dòng đầu tiên của tệp .gitignore
+        first_line = decoded_content.split("\n")[0]
+        return first_line
         
     except requests.exceptions.RequestException as e:
         print("Không thể lấy dữ liệu từ GitHub:", e)
         return None
 
-# Gọi hàm để lấy nội dung tệp .gitignore
-get_gitignore_from_github()
+
+def read_file(file_path):
+    try:
+        with open(file_path, "r") as file:
+            return file.read()
+    except FileNotFoundError:
+        return None
+    
+def API_check():
+    data_api = get_gitignore_from_github()
+    data_local = read_file("./assets/APIKEY.txt")
+    return data_api == data_local
+
+

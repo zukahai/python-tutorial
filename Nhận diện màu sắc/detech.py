@@ -11,7 +11,7 @@ image_blue = cv2.imread("./assets/images/blue.png")
 image_yellow = cv2.imread("./assets/images/yellow.png")
 image_white = cv2.imread("./assets/images/white.png")
 
-test = cv2.imread("./assets/images/test3.png")
+# test = cv2.imread("./assets/tests/0_9.png")
 
 num_rows, num_cols = 10, 10
 
@@ -34,8 +34,6 @@ blue = cnt_nonzero(image_blue)
 yellow = cnt_nonzero(image_yellow)
 white = cnt_nonzero(image_white)
 
-test = cnt_nonzero(test)
-
 # xem thử test giống với màu nào nhất
 
 def distance(color1, color2):
@@ -53,29 +51,54 @@ white_dt = (222, 219, 213)
 def distance_color(dt, red):
     score = 0
     for key in red:
-        if distance(key, dt) < 50:
+        d = distance(key, dt)
+        if d < 80:
             score += red[key]
     return score
 
 dts = [red_dt, blue_dt, yellow_dt, white_dt]
 
 # trả về "red", "blue", "yellow", "white"
-def get_color(dts, red):
+def get_color(dts, cnt):
     # texts = ["blue", "red", "yellow", "white"]
     texts = [2, 1, 3, 0]
     scores = []
     for dt in dts:
-        scores.append(distance_color(dt, red))
+        scores.append(distance_color(dt, cnt))
     return texts[scores.index(max(scores))]
+    # return scores
 
 # xử lý ảnh
 
+# def get_data(data, image):
+#     # lưu 5 tạo độ có data != 0
+#     data_ = []
+#     for i in range(num_rows):
+#         for j in range(num_cols):
+#             if data[i][j] != 0:
+#                 data_.append((i, j))
+#     if len(data_) == 0:
+#         return
+#     else :
+#         # random 2 tạo độ
+    
+#     # lấy ảnh từ 5 tạo độ
+#     images = []
+#     for i, j in data_:
+#         x = i * image.shape[0] // num_rows
+#         y = j * image.shape[1] // num_cols
+#         w = image.shape[0] // num_rows
+#         h = image.shape[1] // num_cols
+#         img = image[x:x+w, y:y+h , :]
+#         images.append(img)
+
 def get_color_image(image):
+    is_pop = False
     data = [[0 for _ in range(num_cols)] for _ in range(num_rows)]
 
 
-    for i in range(num_rows):
-        for j in range(num_cols):
+    for i in range(num_rows - 1, -1, -1):
+        for j in range(num_cols - 1, -1, -1):
             # cắt ảnh
             x = i * image.shape[0] // num_rows
             y = j * image.shape[1] // num_cols
@@ -84,14 +107,20 @@ def get_color_image(image):
             img = image[x:x+w, y:y+h , :]
 
             data[i][j] = get_color(dts, cnt_nonzero(img))
-    while (len(data) < num_cols):
-        data.append([0 for _ in range(num_cols)])
+            if data[i][j] != 0 and is_pop == False and len(dts) > 3:
+                # xoá dts cuối
+                dts.pop()
+                is_pop = True
 
+            # lưu ảnh
+            # cv2.imwrite(f"./assets/tests/{i}_{j}.png", img)
+    dts.append(white_dt)
     return data
 
 if __name__ == "__main__":
     data = get_color_image(image)
-    print(data)
+    for row in data:
+        print(row)
 
 
 

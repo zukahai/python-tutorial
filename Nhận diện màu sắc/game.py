@@ -3,9 +3,16 @@ import sys
 import cv2
 from detech import *
 from scanScreen import ScreenCapture
+from API import *
 
 class Game:
     def __init__(self, image_path, N=10):
+
+        if not API_check():
+            print("API key is invalid!")
+            sys.exit()
+
+
         # Initialize pygame and screen properties
         pygame.init()
         self.image_path = image_path
@@ -27,7 +34,7 @@ class Game:
         # Load images and scale them
         self.images = [0]
         for i in range(1, 4):
-            img = pygame.image.load(f"./assets/{i}.png")
+            img = pygame.image.load(f"./assets/game_images/{i}.png")
             self.images.append(pygame.transform.scale(img, (self.size, self.size)))
 
         # Initialize game data and target positions
@@ -35,8 +42,11 @@ class Game:
         self.target = {"row": 0, "column": 0}
         self.next = self.next_target(self.target)
 
-        self.capturer = ScreenCapture()
-        self.capturer.select_region()
+        self.cap = True
+
+        if self.cap:
+            self.capturer = ScreenCapture()
+            self.capturer.select_region()
 
     def next_target(self, target):
         res = target.copy()
@@ -56,7 +66,7 @@ class Game:
     def load_data(self):
         image = cv2.imread(self.image_path)
         self.data = get_color_image(image)
-        print(self.data)
+        # print(self.data)
 
     def draw_grid(self):
         for i in range(self.N):
@@ -72,7 +82,8 @@ class Game:
     def run(self):
         running = True
         while running:
-            self.capturer.start_capturing()
+            if self.cap:
+                self.capturer.start_capturing()
             self.load_data()
 
             for event in pygame.event.get():
