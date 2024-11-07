@@ -1,8 +1,8 @@
 import pyautogui
 import cv2
 import numpy as np
-import time
 from screeninfo import get_monitors
+from PIL import Image, ImageDraw, ImageFont
 
 class ScreenCapture:
     def __init__(self, monitor_index=0):
@@ -35,15 +35,33 @@ class ScreenCapture:
             if event == cv2.EVENT_LBUTTONDOWN:
                 if self.top_left is None:
                     self.top_left = (x, y)
-                    # print(f"Điểm trên trái: {self.top_left}")
                 elif self.bottom_right is None:
                     self.bottom_right = (x, y)
-                    # print(f"Điểm dưới phải: {self.bottom_right}")
                     cv2.destroyAllWindows()
         
         # Hiển thị toàn bộ màn hình và cho phép chọn vùng
         screenshot = self.get_screenshot()
-        cv2.imshow("Select Region", screenshot)
+        
+        # Chuyển đổi ảnh screenshot sang đối tượng PIL để thêm text
+        pil_image = Image.fromarray(screenshot)
+        draw = ImageDraw.Draw(pil_image)
+        
+        # Đường dẫn font (nếu máy bạn có font hỗ trợ tiếng Việt)
+        # Bạn có thể thay đổi đường dẫn tới font khác có sẵn trên máy
+        font_path = "arial.ttf"  # Hoặc đường dẫn đầy đủ đến file font
+        font = ImageFont.truetype(font_path, 60)  # Kích thước font 24
+        
+        # Thêm dòng chữ
+        text = "Vui lòng click chuột vào góc trên trái và góc dưới phải"
+        text_position = (10, 10)  # Vị trí hiển thị dòng chữ
+        text_color = (255, 0, 0)  # Màu chữ (RGB format)
+        
+        draw.text(text_position, text, font=font, fill=text_color)
+        
+        # Chuyển đổi ảnh PIL ngược lại sang numpy array để hiển thị với OpenCV
+        screenshot_with_text = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+        
+        cv2.imshow("Select Region", screenshot_with_text)
         cv2.setMouseCallback("Select Region", click_event)
         cv2.waitKey(0)
 
@@ -59,7 +77,6 @@ class ScreenCapture:
             screenshot = pyautogui.screenshot(region=(x1, y1, width, height))
             return screenshot
         else:
-            # print("Vui lòng chọn vùng cần chụp trước!")
             return None
 
     def start_capturing(self, save_folder="./assets/images"):
@@ -79,7 +96,6 @@ class ScreenCapture:
             if screenshot:
                 file_path = f"{save_folder}/image.png"
                 screenshot.save(file_path)
-                # print(f"Đã lưu: {file_path}")
                 count += 1
         except KeyboardInterrupt:
             print("Đã dừng chụp màn hình.")
