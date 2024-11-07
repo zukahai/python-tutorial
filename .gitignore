@@ -11,5 +11,6 @@ dist/
 *.egg-info/
 *.spec
 *mp3
+*exe
 
 __pycache__/
