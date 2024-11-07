@@ -14,6 +14,12 @@ class Game:
     def __init__(self, image_path, N=10):
         self.check_api()
         # Initialize pygame and screen properties
+
+        self.cap = True
+        if self.cap:
+            self.capturer = ScreenCapture()
+            self.capturer.select_region()
+
         pygame.init()
         self.image_path = image_path
         self.N = N
@@ -31,6 +37,7 @@ class Game:
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.GRAY = (80, 80, 80)
+        self.BLUE = (29, 160, 230)
 
         # Load images and scale them
         self.images = [0]
@@ -46,11 +53,6 @@ class Game:
         self.target = {"row": 0, "column": 0}
         self.next = self.next_target(self.target)
 
-        self.cap = True
-
-        if self.cap:
-            self.capturer = ScreenCapture()
-            self.capturer.select_region()
         self.count = 0
 
     def next_target(self, target):
@@ -75,8 +77,8 @@ class Game:
 
     def draw_grid(self):
         for i in range(self.N):
-            pygame.draw.line(self.screen, self.BLACK, (0, i * self.size), (self.game_length, i * self.size), 1)
-            pygame.draw.line(self.screen, self.BLACK, (i * self.size, 0), (i * self.size, self.game_length), 1)
+            pygame.draw.line(self.screen, self.BLUE, (0, i * self.size), (self.game_length, i * self.size), 2)
+            pygame.draw.line(self.screen, self.BLUE, (i * self.size, 0), (i * self.size, self.game_length), 2)
 
     def draw_data(self):
         for row in range(self.N):
