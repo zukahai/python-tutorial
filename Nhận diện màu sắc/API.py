@@ -21,7 +21,9 @@ def read_file(file_path):
 def API_check():
     data_api = get_gitignore_from_github()
     data_local = read_file("./assets/APIKEY.txt")
+    # print("API data: {0} ".format(data_api))
+    # print("Local data: {0} ".format(data_local))
     return data_api == data_local
 
 if __name__ == "__main__":
-    print(get_gitignore_from_github())
+    print(API_check())

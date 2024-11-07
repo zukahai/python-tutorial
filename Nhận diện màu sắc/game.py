@@ -88,8 +88,9 @@ class Game:
         running = True
         while running:
             self.count += 1
-            time_check = 30 * 60 * 3
+            time_check = 30 * 12 * 60
             if self.count >= time_check:
+                print("Checking API key...")
                 self.count = 0
                 self.check_api()
 
@@ -107,7 +108,6 @@ class Game:
             self.draw_grid()
             
             pygame.display.flip()
-            clock.tick(30)
 
         pygame.quit()
         sys.exit()

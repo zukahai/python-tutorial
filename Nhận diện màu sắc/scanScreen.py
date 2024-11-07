@@ -62,7 +62,7 @@ class ScreenCapture:
             # print("Vui lòng chọn vùng cần chụp trước!")
             return None
 
-    def start_capturing(self, save_folder="./assets/images/"):
+    def start_capturing(self, save_folder="./assets/images"):
         """
         Bắt đầu chụp màn hình liên tục với khoảng thời gian xác định.
         
