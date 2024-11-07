@@ -17,6 +17,7 @@ class Game:
         pygame.init()
         self.image_path = image_path
         self.N = N
+        self.mode = 0
 
         # Screen and game dimensions
         screen_info = pygame.display.Info()
@@ -34,7 +35,10 @@ class Game:
         # Load images and scale them
         self.images = [0]
         for i in range(1, 4):
-            img = pygame.image.load(f"./assets/game_images/{i}.png")
+            img = pygame.image.load(f"./assets/game_images/1_{i}.png")
+            self.images.append(pygame.transform.scale(img, (self.size, self.size)))
+        for i in range(1, 4):
+            img = pygame.image.load(f"./assets/game_images/2_{i}.png")
             self.images.append(pygame.transform.scale(img, (self.size, self.size)))
 
         # Initialize game data and target positions
@@ -78,7 +82,7 @@ class Game:
         for row in range(self.N):
             for column in range(self.N):
                 if self.data[row][column] != 0:
-                    self.screen.blit(self.images[self.data[row][column]], (column * self.size, row * self.size))
+                    self.screen.blit(self.images[self.mode + self.data[row][column]], (column * self.size, row * self.size))
 
     def run(self):
         # 1 giây load 30 frame
@@ -101,6 +105,10 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                # Nếu bấm phím "M" thì chuyển chế độ
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_m:
+                        self.mode = 3 - self.mode
 
             # Fill the screen and draw data and grid
             self.screen.fill(self.WHITE)
