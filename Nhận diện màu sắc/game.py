@@ -6,13 +6,13 @@ from scanScreen import ScreenCapture
 from API import *
 
 class Game:
-    def __init__(self, image_path, N=10):
-
+    def check_api(self):
         if not API_check():
             print("API key is invalid!")
             sys.exit()
 
-
+    def __init__(self, image_path, N=10):
+        self.check_api()
         # Initialize pygame and screen properties
         pygame.init()
         self.image_path = image_path
@@ -47,6 +47,7 @@ class Game:
         if self.cap:
             self.capturer = ScreenCapture()
             self.capturer.select_region()
+        self.count = 0
 
     def next_target(self, target):
         res = target.copy()
@@ -80,8 +81,18 @@ class Game:
                     self.screen.blit(self.images[self.data[row][column]], (column * self.size, row * self.size))
 
     def run(self):
+        # 1 giây load 30 frame
+
+        clock = pygame.time.Clock()
+
         running = True
         while running:
+            self.count += 1
+            time_check = 30 * 60 * 3
+            if self.count >= time_check:
+                self.count = 0
+                self.check_api()
+
             if self.cap:
                 self.capturer.start_capturing()
             self.load_data()
@@ -96,6 +107,7 @@ class Game:
             self.draw_grid()
             
             pygame.display.flip()
+            clock.tick(30)
 
         pygame.quit()
         sys.exit()

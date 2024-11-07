@@ -105,6 +105,7 @@ def get_data(data, image):
 
                 data[i][j] = get_color(dts, cnt_nonzero(img))
                 return data
+    return data
                 
 
 def get_color_image(image):
