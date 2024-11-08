@@ -44,10 +44,10 @@ def distance(color1, color2):
     return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
 
 # mã màu red
-red_dt = (78, 60, 222)
-blue_dt = (215, 176, 77)
-yellow_dt = (30, 233, 237)
-white_dt = (225, 223, 217)
+red_dt = (30, 25, 236)
+blue_dt = (245, 30, 30)
+yellow_dt = (39, 221, 217)
+white_dt = (222, 219, 213)
 
 def distance_color(dt, red):
     score = 0
@@ -61,16 +61,13 @@ dts = [red_dt, blue_dt, yellow_dt, white_dt]
 
 # trả về "red", "blue", "yellow", "white"
 def get_color(dts, cnt):
-    texts = ["red", "blue", "yellow", "white"]
-    # texts = [2, 1, 3, 0]
+    # texts = ["blue", "red", "yellow", "white"]
+    texts = [2, 1, 3, 0]
     scores = []
     for dt in dts:
         scores.append(distance_color(dt, cnt))
-    print(scores)
-    index = scores.index(max(scores[0:3]))
-    if len(dts) > 3 and scores[index] * 3 < scores[3]:
-        index = 3
-    return texts[index]
+    return texts[scores.index(max(scores))]
+    # return scores
 
 # xử lý ảnh
 
@@ -137,11 +134,9 @@ def get_color_image(image):
     return data
 
 if __name__ == "__main__":
-    # data = get_color_image(image)
-    # for row in data:
-    #     print(row)
-    print(get_color(dts, blue))
-
+    data = get_color_image(image)
+    for row in data:
+        print(row)
 
 
 

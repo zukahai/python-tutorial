@@ -15,7 +15,7 @@ def cnt_nonzero(image):
     cnt = dict(sorted(cnt.items(), key=lambda item: item[1], reverse=True))
     return cnt
 
-image_t = cv2.imread("./assets/images/white.png")
+image_t = cv2.imread("white.png")
 t = cnt_nonzero(image_t)
 
 r_avg = 0
