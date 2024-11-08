@@ -68,7 +68,7 @@ def get_color(dts, cnt):
         scores.append(distance_color(dt, cnt))
     # print(scores)
     index = scores.index(max(scores[0:3]))
-    if len(dts) > 3 and scores[index] * 3 < scores[3]:
+    if len(dts) > 3 and scores[index] * 7 < scores[3]:
         index = 3
     return texts[index]
 
@@ -132,15 +132,17 @@ def get_color_image(image):
                 is_pop = True
 
             # lưu ảnh
-            # cv2.imwrite(f"./assets/tests/{i}_{j}.png", img)
+            cv2.imwrite(f"./assets/tests/{i}_{j}.png", img)
     dts.append(white_dt)
     return data
 
 if __name__ == "__main__":
-    data = get_color_image(image)
-    for row in data:
-        print(row)
-    # print(get_color(dts, blue))
+    # data = get_color_image(image)
+    # for row in data:
+    #     print(row)
+    image = cv2.imread("./assets/tests/0_0.png")
+    cnt = cnt_nonzero(image)
+    print(get_color(dts, cnt))
 
 
 

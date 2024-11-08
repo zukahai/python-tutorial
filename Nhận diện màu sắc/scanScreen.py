@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from screeninfo import get_monitors
 from PIL import Image, ImageDraw, ImageFont
+import json
 
 class ScreenCapture:
     def __init__(self, monitor_index=0):
@@ -18,6 +19,17 @@ class ScreenCapture:
         
         self.top_left = None
         self.bottom_right = None
+        self.camera = self.read_file()
+        print("Camera:", self.camera)
+
+    def read_file(self, file_path="./assets/settings.json"):
+        """
+        Đọc nội dung x, y từ file JSON.
+        """
+        with open(file_path, "r") as file:
+            data = json.load(file)
+            self.camera = (data["x"], data["y"])
+            return self.camera
 
     def get_screenshot(self):
         """
@@ -34,9 +46,9 @@ class ScreenCapture:
         def click_event(event, x, y, flags, param):
             if event == cv2.EVENT_LBUTTONDOWN:
                 if self.top_left is None:
-                    self.top_left = (x, y)
+                    self.top_left = (x + self.camera[0], y + self.camera[1])
                 elif self.bottom_right is None:
-                    self.bottom_right = (x, y)
+                    self.bottom_right = (x + self.camera[0], y + self.camera[1])
                     cv2.destroyAllWindows()
         
         # Hiển thị toàn bộ màn hình và cho phép chọn vùng
