@@ -61,12 +61,12 @@ dts = [red_dt, blue_dt, yellow_dt, white_dt]
 
 # trả về "red", "blue", "yellow", "white"
 def get_color(dts, cnt):
-    texts = ["red", "blue", "yellow", "white"]
-    # texts = [2, 1, 3, 0]
+    # texts = ["red", "blue", "yellow", "white"]
+    texts = [2, 1, 3, 0]
     scores = []
     for dt in dts:
         scores.append(distance_color(dt, cnt))
-    print(scores)
+    # print(scores)
     index = scores.index(max(scores[0:3]))
     if len(dts) > 3 and scores[index] * 3 < scores[3]:
         index = 3
@@ -137,10 +137,10 @@ def get_color_image(image):
     return data
 
 if __name__ == "__main__":
-    # data = get_color_image(image)
-    # for row in data:
-    #     print(row)
-    print(get_color(dts, blue))
+    data = get_color_image(image)
+    for row in data:
+        print(row)
+    # print(get_color(dts, blue))
 
 
 
