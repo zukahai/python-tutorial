@@ -136,7 +136,7 @@ def get_color_image(image):
                 is_pop = True
 
             # lưu ảnh
-            cv2.imwrite(f"./assets/tests/{i}_{j}.png", img)
+            # cv2.imwrite(f"./assets/tests/{i}_{j}.png", img)
     dts.append(white_dt)
     return data
 

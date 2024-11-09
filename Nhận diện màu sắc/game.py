@@ -13,8 +13,7 @@ class Game:
 
     def __init__(self, image_path, N=10):
         self.check_api()
-        # Initialize pygame and screen properties
-
+        
         self.cap = True
         if self.cap:
             self.capturer = ScreenCapture()
@@ -32,7 +31,7 @@ class Game:
         self.size = self.game_length / self.N
 
         # Setup screen and colors
-        self.screen = pygame.display.set_mode((self.game_length, self.game_length))
+        self.screen = pygame.display.set_mode((self.game_length, self.game_length), pygame.RESIZABLE)
         pygame.display.set_caption("Game")
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
@@ -55,6 +54,21 @@ class Game:
 
         self.count = 0
 
+    def update_screen_size(self, new_length):
+        self.game_length = new_length
+        self.size = self.game_length / self.N
+        self.screen = pygame.display.set_mode((self.game_length, self.game_length), pygame.RESIZABLE)
+
+
+        # Rescale images to new size
+        self.images = [0]
+        for i in range(1, 4):
+            img = pygame.image.load(f"./assets/game_images/1_{i}.png")
+            self.images.append(pygame.transform.scale(img, (self.size, self.size)))
+        for i in range(1, 4):
+            img = pygame.image.load(f"./assets/game_images/2_{i}.png")
+            self.images.append(pygame.transform.scale(img, (self.size, self.size)))
+
     def next_target(self, target):
         res = target.copy()
         if res["row"] == self.N:
@@ -73,7 +87,6 @@ class Game:
     def load_data(self):
         image = cv2.imread(self.image_path)
         self.data = get_data(self.data, image)
-        # print(self.data)
 
     def draw_grid(self):
         for i in range(self.N):
@@ -87,10 +100,7 @@ class Game:
                     self.screen.blit(self.images[self.mode + self.data[row][column]], (column * self.size, row * self.size))
 
     def run(self):
-        # 1 giây load 30 frame
-
         clock = pygame.time.Clock()
-
         running = True
         while running:
             self.count += 1
@@ -107,7 +117,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                # Nếu bấm phím "M" thì chuyển chế độ
+                if event.type == pygame.VIDEORESIZE:
+                    # Update screen size on resize
+                    self.update_screen_size(max(event.w, event.h))
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_m:
                         self.mode = 3 - self.mode
@@ -118,6 +130,7 @@ class Game:
             self.draw_grid()
             
             pygame.display.flip()
+            clock.tick(30)
 
         pygame.quit()
         sys.exit()
