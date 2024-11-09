@@ -47,7 +47,7 @@ def distance(color1, color2):
 red_dt = (78, 60, 222)
 blue_dt = (215, 176, 77)
 yellow_dt = (30, 233, 237)
-white_dt = (225, 223, 217)
+white_dt = (253, 252, 253)
 
 def distance_color(dt, red):
     score = 0
@@ -100,10 +100,12 @@ def get_data(data, image):
     for i in range(num_rows):
         for j in range(num_cols):
             if data[i][j] == 0:
-                x = i * image.shape[0] // num_rows
-                y = j * image.shape[1] // num_cols
                 w = image.shape[0] // num_rows
                 h = image.shape[1] // num_cols
+                x = i * image.shape[0] // num_rows + w // 4
+                y = j * image.shape[1] // num_cols + h // 4
+                w = w // 2
+                h = h // 2
                 img = image[x:x+w, y:y+h , :]
 
                 data[i][j] = get_color(dts, cnt_nonzero(img))
@@ -119,10 +121,12 @@ def get_color_image(image):
     for i in range(num_rows - 1, -1, -1):
         for j in range(num_cols - 1, -1, -1):
             # cắt ảnh
-            x = i * image.shape[0] // num_rows
-            y = j * image.shape[1] // num_cols
             w = image.shape[0] // num_rows
             h = image.shape[1] // num_cols
+            x = i * image.shape[0] // num_rows + w // 4
+            y = j * image.shape[1] // num_cols + h // 4
+            w = w // 2
+            h = h // 2
             img = image[x:x+w, y:y+h , :]
 
             data[i][j] = get_color(dts, cnt_nonzero(img))
@@ -137,12 +141,12 @@ def get_color_image(image):
     return data
 
 if __name__ == "__main__":
-    # data = get_color_image(image)
-    # for row in data:
-    #     print(row)
-    image = cv2.imread("./assets/tests/0_0.png")
-    cnt = cnt_nonzero(image)
-    print(get_color(dts, cnt))
+    data = get_color_image(image)
+    for row in data:
+        print(row)
+    # image = cv2.imread("./assets/tests/9_9.png")
+    # cnt = cnt_nonzero(image)
+    # print(get_color(dts, cnt))
 
 
 
