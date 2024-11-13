@@ -119,7 +119,10 @@ class Game:
                     running = False
                 if event.type == pygame.VIDEORESIZE:
                     # Update screen size on resize
-                    self.update_screen_size(max(event.w, event.h))
+                    if max(event.h, event.w) > self.game_length:
+                        self.update_screen_size(max(event.h, event.w))
+                    elif min(event.h, event.w) < self.game_length:
+                        self.update_screen_size(min(event.h, event.w))
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_m:
                         self.mode = 3 - self.mode
