@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trò Chơi Rắn Săn Mồi</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        #score {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="score">Điểm số: <span id="score-value">0</span></div>
+        <canvas id="gameCanvas" width="400" height="400" tabindex="1"></canvas>
+        <div style="margin-top: 10px;">
+            Sử dụng phím mũi tên hoặc WASD để di chuyển rắn
+        </div>
+    </div>
+    <py-script src="snake_game.py"></py-script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tower Defense Game</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+            margin: 0 auto;
+            display: block;
+        }
+        .container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        h1 {
+            font-family: Arial, sans-serif;
+        }
+        .instructions {
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: left;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #gameInfo {
+            margin: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tower Defense Game</h1>
+        <div class="instructions">
+            <h3>Hướng dẫn:</h3>
+            <ul>
+                <li>Click chuột để đặt tháp (chi phí: 20 vàng)</li>
+                <li>Tháp sẽ tự động tấn công kẻ địch trong tầm bắn</li>
+                <li>Tiêu diệt kẻ địch để nhận thêm vàng</li>
+                <li>Bảo vệ căn cứ khỏi kẻ địch</li>
+            </ul>
+        </div>
+        <div id="gameInfo">Vàng: <span id="gold">60</span></div>
+        <div id="game-container">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+    </div>
+
+    <py-config>
+        packages = ["pygame"]
+    </py-config>
+
+    <py-script src="game.py"></py-script>
+</body>
+</html>
