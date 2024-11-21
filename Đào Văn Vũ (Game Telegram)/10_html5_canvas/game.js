@@ -1,23 +1,23 @@
-game_W = 700, game_H = 200;
+game_W = 800, game_H = 600;
+
+mapImage = new Image();
+mapImage.src = "map1.png";
 
 
 class game {
     constructor() {
         this.canvas = document.createElement("canvas");
         this.context = this.canvas.getContext("2d");
-        this.init();
         this.canvas.width = game_W;
         this.canvas.height = game_H;
         document.body.appendChild(this.canvas);
-    }
 
-    init() {
-        // this.render();
-        this.index = 0;
-        this.startFPS(30);
         this.listenMouse();
         this.listenTouch();
         this.listenKey();
+
+        this.listPoint = [];
+        this.startFPS(30);
     }
 
     // hàm chạy game theo fps của máy
@@ -38,7 +38,7 @@ class game {
     // hàm cập nhật game
     update() {
         this.clearScreen();
-
+        this.draw();
     }
 
     // hàm lắng nghe sự kiện chuột
@@ -47,7 +47,7 @@ class game {
             var x = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
             var y = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
             console.log("Mouse Down " + x + " " + y);
-            
+            this.listPoint.push({x: x, y: y});
         })
 
         document.addEventListener("mousemove", evt => {
@@ -98,7 +98,14 @@ class game {
     // hàm vẽ các thành phần
     draw() {
         this.clearScreen();
-        this.drawFPS();
+        // draw map
+        this.context.drawImage(mapImage, 0, 0, game_W, game_H);
+
+        // draw point
+        this.context.fillStyle = "#FF0000";
+        for (let i = 0; i < this.listPoint.length; i++) {
+            this.context.fillRect(this.listPoint[i].x, this.listPoint[i].y, 20, 20);
+        }
     }
 
 
