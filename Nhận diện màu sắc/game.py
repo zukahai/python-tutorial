@@ -52,7 +52,7 @@ class Game:
         self.target = {"row": 0, "column": 0}
         self.next = self.next_target(self.target)
 
-        self.count = 0
+        self.count = 0 
 
     def update_screen_size(self, new_length):
         self.game_length = new_length
